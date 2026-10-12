@@ -39,9 +39,17 @@ WISHLIST = [
         "id": "fendi",
         "numeral": "IV",
         "title": "Pera Fendiana",
-        "subtitle": "Fendi Pochette aus FF-Jacquard — zum Zusammenlegen",
-        "url": "https://www.fendi.com/at-de/herren/taschen/pochetten/flache-pochette-mittlerer-gro%C3%9Fe-aus-ff-jacquard-pochette-aus-stoff-in-schwarz-7n0134afbvf1ikj",
+        "subtitle": "Fendi Pochette aus FF-Jacquard in Braun — zum Zusammenlegen",
+        "url": "https://www.fendi.com/at-de/herren/taschen/flache-pochette-mittlerer-gro%C3%9Fe-aus-ff-jacquard-pochette-aus-stoff-in-braun-7n0134afbvf1hrm",
         "shared": True,
+    },
+    {
+        "id": "parma",
+        "numeral": "V",
+        "title": "Unguentum Parmense",
+        "subtitle": "Ein Duft von Acqua di Parma",
+        "url": None,
+        "shared": False,
     },
 ]
 
