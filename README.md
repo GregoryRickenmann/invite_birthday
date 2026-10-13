@@ -1,4 +1,4 @@
-# Arcanum · Gregorius XXIII
+# Arcanum – Gregorius XXIII
 
 Mysteriöse römische Geburtstagseinladung als Streamlit-App.
 
@@ -7,10 +7,32 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Gäste geben zuerst ihren Namen ein (Gästeliste), danach sehen sie die Einladung
-und können sich bei der Wunschliste einschreiben bzw. fürs Zusammenlegen eintragen.
-Alle Einträge werden in `data/registry.json` gespeichert.
+Gäste geben zuerst ihren Namen ein, danach sehen sie die Einladung, einen
+Countdown in römischen Ziffern, das Orakel (persönliche Rolle für die Nacht)
+und die Wunschliste zum Einschreiben bzw. Zusammenlegen.
 
-> Hinweis: Auf Streamlit Community Cloud ist das Dateisystem nicht dauerhaft —
-> bei einem Neustart der App gehen Einträge verloren. Für den Ernstfall eine
-> kleine Datenbank (z. B. Google Sheet oder Supabase) anbinden.
+## Speicherung: Google Sheet
+
+Ohne Secrets speichert die App lokal in `data/registry.json` (nur zum Testen).
+Für die geteilte Version auf Streamlit Cloud ein Google Sheet anbinden:
+
+1. **Google Cloud:** Auf <https://console.cloud.google.com> ein Projekt anlegen
+   und unter «APIs & Dienste» die **Google Sheets API** aktivieren.
+2. **Service Account:** «IAM & Verwaltung» → «Dienstkonten» → Dienstkonto
+   erstellen (keine Rollen nötig) → beim Konto «Schlüssel» → «Schlüssel
+   hinzufügen» → **JSON**. Die Datei wird heruntergeladen.
+3. **Sheet:** Ein leeres Google Sheet erstellen und über «Freigeben» mit der
+   `client_email` aus der JSON-Datei als **Bearbeiter** teilen.
+4. **Secrets:** In Streamlit Cloud bei der App → «Settings» → «Secrets» den
+   Inhalt von `.streamlit/secrets.toml.example` einfügen, die Sheet-URL und
+   die Werte aus der JSON-Datei eintragen. Speichern – die App startet neu.
+
+Die App legt die Tabellenblätter **Gaeste** und **Wunschliste** selbst an.
+Dort siehst du jederzeit, wer das Siegel gebrochen hat und wer sich wofür
+eingeschrieben hat.
+
+## Deploy auf Streamlit Cloud
+
+share.streamlit.io → «Create app» → Repo `GregoryRickenmann/invite_birthday`,
+Branch wählen, Main file `app.py` → Deploy. Danach unter «Settings» →
+«Sharing» die App auf öffentlich stellen, damit Gäste ohne Login zugreifen können.
