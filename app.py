@@ -472,8 +472,7 @@ def render_wishlist(db, guest: str) -> None:
             if item["url"] else ""
         )
         if names:
-            label = "Eingeschrieben" if item["shared"] else "Reserviert von"
-            who = f'<div class="item-names">{label}: {esc(", ".join(names))}</div>'
+            who = f'<div class="item-names">Eingeschrieben: {esc(", ".join(names))}</div>'
         else:
             who = '<div class="item-names empty">Noch niemand hat sich eingeschrieben.</div>'
 
@@ -488,11 +487,8 @@ def render_wishlist(db, guest: str) -> None:
                     with st.spinner(""):
                         db.remove_signup(item["id"], guest)
                     st.rerun()
-            elif names and not item["shared"]:
-                pass  # single gift already taken
             else:
-                text = "Mich einschreiben" if item["shared"] else "Ich übernehme das"
-                if st.button(text, key=f"join-{item['id']}", use_container_width=True):
+                if st.button("Mich einschreiben", key=f"join-{item['id']}", use_container_width=True):
                     with st.spinner(""):
                         db.add_signup(item["id"], item["title"], guest)
                     st.rerun()
