@@ -14,7 +14,7 @@ import streamlit as st
 
 TZ = ZoneInfo("Europe/Zurich")
 GUESTS_SHEET = "Gaeste"
-GUESTS_HEADER = ["Name", "Titel", "Zeit"]
+GUESTS_HEADER = ["Name", "Titel", "Zeit", "Aufgabe"]
 WISHES_SHEET = "Wunschliste"
 WISHES_HEADER = ["Wunsch-ID", "Wunsch", "Name", "Zeit"]
 
@@ -50,6 +50,8 @@ def _worksheet(title: str, header: tuple):
     except gspread.WorksheetNotFound:
         ws = book.add_worksheet(title=title, rows=200, cols=len(header))
     if ws.row_values(1) != list(header):
+        if ws.col_count < len(header):
+            ws.add_cols(len(header) - ws.col_count)
         ws.update([list(header)], "A1")
     return ws
 
@@ -81,10 +83,10 @@ class SheetsBackend:
     def guests(self) -> dict:
         return self._parse_guests(_cached_rows(GUESTS_SHEET, tuple(GUESTS_HEADER)))
 
-    def add_guest(self, name: str, title: str) -> None:
+    def add_guest(self, name: str, title: str, task: str = "") -> None:
         ws = self._guests_ws()
         if name not in self._parse_guests(ws.get_all_values()):
-            ws.append_row([name, title, _now()], value_input_option="RAW")
+            ws.append_row([name, title, _now(), task], value_input_option="RAW")
             _cached_rows.clear()
 
     def signups(self) -> dict:
@@ -132,7 +134,7 @@ class LocalBackend:
     def guests(self) -> dict:
         return self._load()["guests"]
 
-    def add_guest(self, name: str, title: str) -> None:
+    def add_guest(self, name: str, title: str, task: str = "") -> None:
         self._update(lambda d: d["guests"].setdefault(name, title))
 
     def signups(self) -> dict:

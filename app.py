@@ -87,6 +87,22 @@ OMINA = [
     ("Ultimus discedes.", "Du wirst als Letzter gehen. So steht es geschrieben."),
 ]
 
+MANDATA = [
+    ("Cum omnibus convivis poculum tolle.", "Stosse mit jedem Gast mindestens einmal an."),
+    ("Orationem in honorem Gregorii habe.", "Halte eine kurze Rede auf Gregorius."),
+    ("Fac ut tres convivae «Ave!» clament.", "Bring drei Gäste dazu, laut «Ave!» zu rufen."),
+    ("Doce aliquem verbum Latinum.", "Bring jemandem ein lateinisches Wort bei."),
+    ("Gregorium hac nocte tantum «Imperatorem» appella.", "Nenne Gregorius heute Nacht nur «Imperator»."),
+    ("Statuam Romanam cum Gregorio imitare.", "Mach ein Foto mit Gregorius, ihr beide als römische Statuen."),
+    ("Pocula aliorum numquam vacua sint.", "Sorge dafür, dass die Becher der anderen nie leer sind."),
+    ("Novum amicum para.", "Lerne jemanden kennen, den du vorher nicht kanntest."),
+    ("Media nocte primus «Ave, Gregori!» clama.", "Ruf um Mitternacht als Erster «Ave, Gregori!»."),
+    ("Aliquem ad saltandum duc.", "Hol jemanden auf die Tanzfläche."),
+    ("Fac ut Gregorius rideat.", "Bring Gregorius zum Lachen."),
+    ("Titulos trium convivarum disce, tuum cela.", "Finde die Titel von drei Gästen heraus, ohne deinen zu verraten."),
+    ("Propinationem Latinam inveni.", "Erfinde einen Trinkspruch auf Latein (oder versuch es zumindest)."),
+]
+
 
 def to_roman(n: int) -> str:
     if n <= 0:
@@ -105,7 +121,8 @@ def oraculum(name: str) -> dict:
     titulus = TITULI[digest[0] % len(TITULI)]
     omen = OMINA[digest[1] % len(OMINA)]
     numerus = digest[2] % 99 + 1
-    return {"titulus": titulus, "omen": omen, "numerus": numerus}
+    mandatum = MANDATA[digest[3] % len(MANDATA)]
+    return {"titulus": titulus, "omen": omen, "numerus": numerus, "mandatum": mandatum}
 
 
 # ---------------------------------------------------------------- styling
@@ -230,6 +247,8 @@ a { color: var(--gold) !important; }
 .oracle .tde { font-style: italic; color: rgba(233,220,192,0.65); margin-bottom: 1rem; }
 .oracle .la { font-family: 'Cinzel', serif; color: var(--parchment); font-size: 1.1rem; letter-spacing: 0.06em; }
 .oracle .de { font-style: italic; color: rgba(233,220,192,0.7); margin-top: 0.3rem; }
+.oracle .mandatum { margin-top: 1.3rem; padding-top: 1.1rem; border-top: 1px solid rgba(201,162,75,0.25); }
+.oracle .mandatum .k { margin-bottom: 0.3rem; }
 .oracle .num { font-family: 'Cinzel', serif; color: #d98b8b; margin-top: 1rem; letter-spacing: 0.2em; font-size: 0.9rem; }
 @keyframes reveal { from { opacity: 0; filter: blur(8px); transform: scale(0.97); } to { opacity: 1; filter: none; transform: none; } }
 
@@ -303,7 +322,7 @@ COUNTDOWN_HTML = """
   const el = document.getElementById("c");
   function tick() {
     let d = Math.floor((target - Date.now()) / 1000);
-    if (d <= 0) { el.outerHTML = '<div class="done">ALEA IACTA EST</div>'; return; }
+    if (d <= 0) { el.outerHTML = '<div class="done">PORTAE APERTAE SUNT</div>'; return; }
     const parts = [[Math.floor(d / 86400), "DIES"], [Math.floor(d % 86400 / 3600), "HORAE"],
                    [Math.floor(d % 3600 / 60), "MINUTA"], [d % 60, "SECUNDA"]];
     el.innerHTML = parts.map(([v, l]) => `<div class="u"><div class="v">${roman(v)}</div><div class="l">${l}</div></div>`).join("");
@@ -342,11 +361,10 @@ def render_gate(db) -> None:
             st.error("Die Götter verlangen einen echten Namen.")
             return
         with st.spinner("Das Siegel bricht ..."):
-            db.add_guest(name, oraculum(name)["titulus"][0])
+            o = oraculum(name)
+            db.add_guest(name, o["titulus"][0], o["mandatum"][1])
         st.session_state.guest = name
         st.rerun()
-
-    html('<div class="footer">ALEA IACTA EST</div>')
 
 
 # ---------------------------------------------------------------- invitation
@@ -435,7 +453,7 @@ def render_oracle(guest: str) -> None:
         return
 
     o = oraculum(guest)
-    (t_la, t_de), (om_la, om_de) = o["titulus"], o["omen"]
+    (t_la, t_de), (om_la, om_de), (m_la, m_de) = o["titulus"], o["omen"], o["mandatum"]
     html(
         f"""
 <div class="oracle">
@@ -445,9 +463,14 @@ def render_oracle(guest: str) -> None:
   <div class="la">«{om_la}»</div>
   <div class="de">{om_de}</div>
   <div class="num">NUMERUS FATALIS {to_roman(o["numerus"])}</div>
+  <div class="mandatum">
+    <div class="k">MANDATUM TUUM</div>
+    <div class="la">{m_la}</div>
+    <div class="de">{m_de}</div>
+  </div>
 </div>
 <div class="section-sub" style="margin-top:0.6rem;font-size:1rem">
-  Erscheine als {t_la}. Niemand sonst muss es wissen.
+  Erfülle dein Mandatum, bevor die Nacht endet. Verrate es niemandem.
 </div>
 """
     )
@@ -460,7 +483,7 @@ def render_wishlist(db, guest: str) -> None:
         '<div class="disclaimer"><span class="latin">Praesentia tua donum satis est</span>'
         "Du musst mir nichts schenken. Deine Anwesenheit ist Geschenk genug.<br>"
         "Wer dennoch etwas beitragen möchte, kann sich unten einschreiben. "
-        "Bei den grossen Stücken legen wir zusammen.</div>"
+        "Ihr dürft auch gerne zusammenlegen, wenn ihr wollt.</div>"
     )
 
     signups = db.signups()
