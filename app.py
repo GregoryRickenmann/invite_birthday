@@ -179,8 +179,15 @@ CSS = """
 header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"],
 [data-testid="stStatusWidget"], #MainMenu, footer { display: none !important; }
 
+html { -webkit-text-size-adjust: 100%; }
 .block-container { max-width: 720px; padding: 3rem 1.5rem 2rem; }
-@media (max-width: 640px) { .block-container { padding: 1.6rem 1rem 1.5rem; } }
+@media (max-width: 640px) {
+  .block-container { padding: 1.6rem 1rem calc(1.5rem + env(safe-area-inset-bottom)); }
+  p, li { font-size: 1.1rem; }
+  .whisper { font-size: 1.08rem; }
+  .rule { margin: 1.9rem auto; }
+}
+.title, .greeting, .item-title, .item-sub { overflow-wrap: break-word; }
 
 html, body, p, li, label, .stMarkdown { font-family: 'Cormorant Garamond', serif !important; }
 p, li { font-size: 1.2rem; line-height: 1.6; color: var(--parchment); }
@@ -203,7 +210,7 @@ a { color: var(--gold) !important; }
   text-align: center; font-size: clamp(2.3rem, 11vw, 4.4rem); line-height: 1.05;
   background: linear-gradient(180deg, #f3dc9a 0%, var(--gold) 45%, #6e5420 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: glow 6s ease-in-out infinite; word-break: break-word;
+  animation: glow 6s ease-in-out infinite;
 }
 @keyframes glow { 50% { filter: drop-shadow(0 0 14px rgba(201,162,75,0.35)); } }
 
@@ -303,7 +310,7 @@ a { color: var(--gold) !important; }
   letter-spacing: 0.1em; display: block; margin-bottom: 0.3rem; font-size: 0.9rem;
 }
 .item { display: flex; gap: 0.7rem; align-items: baseline; }
-.item-num { font-family: 'Cinzel', serif; color: var(--gold-dim); font-size: 0.9rem; min-width: 2.2rem; }
+.item-num { font-family: 'Cinzel', serif; color: var(--gold-dim); font-size: 0.9rem; min-width: 2.2rem; flex-shrink: 0; }
 .item-body { flex: 1; min-width: 0; }
 .item-title { font-family: 'Cinzel', serif; color: var(--parchment); font-size: 0.95rem; letter-spacing: 0.05em; }
 .item-sub { font-style: italic; color: rgba(233,220,192,0.55); font-size: 0.95rem; line-height: 1.35; }
@@ -311,16 +318,19 @@ a { color: var(--gold) !important; }
   font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.15em; vertical-align: middle;
   border: 1px solid var(--blood); color: #d98b8b; padding: 0.05rem 0.4rem; margin-left: 0.3rem;
 }
-a.item-link { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.12em; font-style: normal; margin-left: 0.3rem; }
+a.item-link { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.12em; font-style: normal; margin-left: 0.15rem; padding: 0.7rem 0.3rem; white-space: nowrap; }
 .item-names { font-style: italic; color: var(--gold); font-size: 0.9rem; margin-top: 0.15rem; }
 .item-sep { height: 1px; background: rgba(201,162,75,0.1); margin: 0.1rem 0 0.2rem; }
 .st-key-wishlist .stButton button { padding: 0.3rem 0.3rem; min-height: 0; letter-spacing: 0.04em; border-color: var(--gold-dim) !important; }
 .st-key-wishlist .stButton button p { font-size: 0.75rem !important; }
 .st-key-wishlist [data-testid="stHorizontalBlock"] { gap: 0.6rem; }
+.st-key-wishlist .stButton button { min-height: 40px; }
+.st-key-wishlist [data-testid="stMarkdownContainer"] { margin-bottom: 0 !important; }
 @media (max-width: 640px) {
-  .st-key-wishlist [data-testid="stHorizontalBlock"] { flex-wrap: nowrap !important; }
-  .st-key-wishlist [data-testid="stColumn"]:first-child { flex: 1 1 auto !important; min-width: 0 !important; width: auto !important; }
-  .st-key-wishlist [data-testid="stColumn"]:last-child { flex: 0 0 6.6rem !important; min-width: 6.6rem !important; width: 6.6rem !important; }
+  .st-key-wishlist [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; gap: 0.45rem !important; }
+  .st-key-wishlist [data-testid="stColumn"] { flex: 1 1 100% !important; width: 100% !important; min-width: 100% !important; }
+  .st-key-wishlist [data-testid="stColumn"]:last-child { padding-left: 2.9rem; }
+  .st-key-wishlist .stButton button p { font-size: 0.8rem !important; letter-spacing: 0.15em; }
 }
 
 /* inputs */
@@ -355,11 +365,12 @@ COUNTDOWN_HTML = """
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 <style>
   html, body { margin: 0; background: transparent; }
-  .wrap { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; font-family: 'Cinzel', serif; }
-  .u { flex: 1 1 0; min-width: 64px; max-width: 150px; text-align: center; padding: 10px 4px;
+  .wrap { display: flex; justify-content: center; gap: 6px; flex-wrap: nowrap; font-family: 'Cinzel', serif; }
+  .u { flex: 1 1 0; min-width: 0; max-width: 150px; text-align: center; padding: 10px 2px;
        border: 1px solid rgba(201,162,75,0.35); background: rgba(0,0,0,0.3); }
-  .v { color: #c9a24b; font-size: clamp(15px, 4.6vw, 22px); letter-spacing: 1px; min-height: 28px; }
-  .l { color: #8a6d2c; font-size: 10px; letter-spacing: 3px; margin-top: 4px; }
+  .v { color: #c9a24b; font-size: clamp(12px, 4.4vw, 22px); line-height: 28px; height: 28px; white-space: nowrap; }
+  .l { color: #8a6d2c; font-size: 9px; letter-spacing: 1.5px; margin-top: 4px; }
+  @media (min-width: 400px) { .l { font-size: 10px; letter-spacing: 3px; } }
   .done { color: #c9a24b; text-align: center; font-family: 'Cinzel', serif; letter-spacing: 4px; padding: 18px; }
 </style>
 <div id="c" class="wrap"></div>
