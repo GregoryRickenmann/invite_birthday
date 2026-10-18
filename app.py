@@ -61,7 +61,7 @@ WISHLIST = [
         "url": "https://www.orellfuessli.ch/shop/home/artikeldetails/A1000104687",
         "shared": False,
     },
-    # Dona maiora: the big gifts, to pool together
+    # Dona maiora: the big gifts
     {
         "id": "fendi",
         "numeral": "VII",
@@ -322,6 +322,7 @@ a { color: var(--gold) !important; }
 }
 a.item-link { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.12em; font-style: normal; margin-left: 0.15rem; padding: 0.7rem 0.3rem; white-space: nowrap; }
 .item-names { font-style: italic; color: var(--gold); font-size: 0.9rem; margin-top: 0.15rem; }
+.disclaimer .pool { color: var(--gold); }
 .wish-group { font-style: italic; color: rgba(233,220,192,0.5); font-size: 0.95rem; margin: 0.6rem 0 0.5rem; }
 .wish-group span { font-family: 'Cinzel', serif; font-style: normal; color: var(--gold); letter-spacing: 0.2em; font-size: 0.8rem; margin-right: 0.4rem; }
 .item-sep { height: 1px; background: rgba(201,162,75,0.1); margin: 0.1rem 0 0.2rem; }
@@ -550,16 +551,15 @@ def render_wishlist(db, guest: str) -> None:
         html(
             '<div class="disclaimer"><span class="latin">Praesentia tua donum satis est</span>'
             "Du musst mir nichts schenken. Deine Anwesenheit ist Geschenk genug.<br>"
-            "Wer dennoch etwas beitragen möchte, kann sich unten einschreiben. "
-            "Ihr dürft auch gerne zusammenlegen, wenn ihr wollt.</div>"
+            "Wer dennoch etwas beitragen möchte, kann sich unten einschreiben.<br>"
+            '<span class="pool">Bei allen Geschenken dürft ihr gerne zusammenlegen.</span></div>'
         )
         for i, item in enumerate(WISHLIST):
             if i == 0 or item["shared"] != WISHLIST[i - 1]["shared"]:
-                group = ("Dona maiora", "Die grossen Wünsche, gerne zusammen") if item["shared"] \
+                group = ("Dona maiora", "Die grossen Wünsche") if item["shared"] \
                     else ("Dona minora", "Die kleinen Wünsche")
                 html(f'<div class="wish-group"><span>{group[0]}</span> {group[1]}</div>')
             names = signups.get(item["id"], [])
-            badge = ' <span class="item-badge">COLLATIO</span>' if item["shared"] else ""
             link = (
                 f' <a class="item-link" href="{item["url"]}" target="_blank" rel="noopener">Ansehen</a>'
                 if item["url"] else ""
@@ -572,7 +572,7 @@ def render_wishlist(db, guest: str) -> None:
             with col_text:
                 html(
                     f'<div class="item"><div class="item-num">{item["numeral"]}</div>'
-                    f'<div class="item-body"><div class="item-title">{item["title"]}{badge}</div>'
+                    f'<div class="item-body"><div class="item-title">{item["title"]}</div>'
                     f'<div class="item-sub">{item["subtitle"]}{link}</div>{who}</div></div>'
                 )
             with col_btn:
