@@ -12,12 +12,13 @@ EVENT_ISO = "2026-11-28T19:00:00+01:00"
 MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Grundwiesstrasse+7,+8700+K%C3%BCsnacht"
 
 WISHLIST = [
+    # Dona minora: the small gifts
     {
-        "id": "liber",
+        "id": "laptop",
         "numeral": "I",
-        "title": "Liber",
-        "subtitle": "Ein Buch von Orell Füssli",
-        "url": "https://www.orellfuessli.ch/shop/home/artikeldetails/A1000104687",
+        "title": "Capsa Nigra",
+        "subtitle": "Schwarze Leder-Hülle für den Laptop",
+        "url": None,
         "shared": False,
     },
     {
@@ -29,40 +30,16 @@ WISHLIST = [
         "shared": False,
     },
     {
-        "id": "fendi",
-        "numeral": "III",
-        "title": "Pera Fendiana",
-        "subtitle": "Fendi Pochette aus FF-Jacquard in Schwarz, zum Zusammenlegen",
-        "url": "https://www.fendi.com/at-de/herren/taschen/pochetten/flache-pochette-mittlerer-gro%C3%9Fe-aus-ff-jacquard-pochette-aus-stoff-in-schwarz-7n0134afbvf1ikj",
-        "shared": True,
-    },
-    {
         "id": "candle",
-        "numeral": "IV",
+        "numeral": "III",
         "title": "Cera Odorata",
         "subtitle": "Eine Duftkerze, z.B. von Baobab Collection",
         "url": "https://eu.baobabcollection.com/en-ch",
         "shared": False,
     },
     {
-        "id": "suitsupply",
-        "numeral": "V",
-        "title": "Tessera Sartoria",
-        "subtitle": "Suitsupply Geschenkkarte",
-        "url": "https://suitsupply.com/en-sg/giftcard/details",
-        "shared": False,
-    },
-    {
-        "id": "laptop",
-        "numeral": "VI",
-        "title": "Capsa Nigra",
-        "subtitle": "Schwarze Leder-Hülle für den Laptop",
-        "url": None,
-        "shared": False,
-    },
-    {
         "id": "necessaire",
-        "numeral": "VII",
+        "numeral": "IV",
         "title": "Loculus Coriaceus",
         "subtitle": "Schwarzes Leder-Nécessaire",
         "url": None,
@@ -70,11 +47,36 @@ WISHLIST = [
     },
     {
         "id": "parma",
-        "numeral": "VIII",
+        "numeral": "V",
         "title": "Unguentum Parmense",
-        "subtitle": "Acqua di Parma, die gelbe Colonia-Linie",
+        "subtitle": "Etwas von Acqua di Parma, aus der gelben Colonia-Linie",
         "url": None,
         "shared": False,
+    },
+    {
+        "id": "liber",
+        "numeral": "VI",
+        "title": "Liber",
+        "subtitle": "Ein Buch von Orell Füssli",
+        "url": "https://www.orellfuessli.ch/shop/home/artikeldetails/A1000104687",
+        "shared": False,
+    },
+    # Dona maiora: the big gifts, to pool together
+    {
+        "id": "fendi",
+        "numeral": "VII",
+        "title": "Pera Fendiana",
+        "subtitle": "Fendi Pochette aus FF-Jacquard in Braun",
+        "url": "https://www.fendi.com/at-de/herren/taschen/flache-pochette-mittlerer-gro%C3%9Fe-aus-ff-jacquard-pochette-aus-stoff-in-braun-7n0134afbvf1hrm",
+        "shared": True,
+    },
+    {
+        "id": "suitsupply",
+        "numeral": "VIII",
+        "title": "Tessera Sartoria",
+        "subtitle": "Suitsupply Geschenkkarte",
+        "url": "https://suitsupply.com/en-sg/giftcard/details",
+        "shared": True,
     },
 ]
 
@@ -320,6 +322,8 @@ a { color: var(--gold) !important; }
 }
 a.item-link { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.12em; font-style: normal; margin-left: 0.15rem; padding: 0.7rem 0.3rem; white-space: nowrap; }
 .item-names { font-style: italic; color: var(--gold); font-size: 0.9rem; margin-top: 0.15rem; }
+.wish-group { font-style: italic; color: rgba(233,220,192,0.5); font-size: 0.95rem; margin: 0.6rem 0 0.5rem; }
+.wish-group span { font-family: 'Cinzel', serif; font-style: normal; color: var(--gold); letter-spacing: 0.2em; font-size: 0.8rem; margin-right: 0.4rem; }
 .item-sep { height: 1px; background: rgba(201,162,75,0.1); margin: 0.1rem 0 0.2rem; }
 .st-key-wishlist .stButton button { padding: 0.3rem 0.3rem; min-height: 0; letter-spacing: 0.04em; border-color: var(--gold-dim) !important; }
 .st-key-wishlist .stButton button p { font-size: 0.75rem !important; }
@@ -549,7 +553,11 @@ def render_wishlist(db, guest: str) -> None:
             "Wer dennoch etwas beitragen möchte, kann sich unten einschreiben. "
             "Ihr dürft auch gerne zusammenlegen, wenn ihr wollt.</div>"
         )
-        for item in WISHLIST:
+        for i, item in enumerate(WISHLIST):
+            if i == 0 or item["shared"] != WISHLIST[i - 1]["shared"]:
+                group = ("Dona maiora", "Die grossen Wünsche, gerne zusammen") if item["shared"] \
+                    else ("Dona minora", "Die kleinen Wünsche")
+                html(f'<div class="wish-group"><span>{group[0]}</span> {group[1]}</div>')
             names = signups.get(item["id"], [])
             badge = ' <span class="item-badge">COLLATIO</span>' if item["shared"] else ""
             link = (
