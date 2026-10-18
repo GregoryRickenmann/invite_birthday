@@ -21,34 +21,58 @@ WISHLIST = [
         "shared": False,
     },
     {
-        "id": "trench",
-        "numeral": "II",
-        "title": "Paenula Britannica",
-        "subtitle": "Burberry Trench Coat, zum Zusammenlegen",
-        "url": "https://www.ricardo.ch/de/a/magnifique-trench-coat-burberry-1312507844/",
-        "shared": True,
-    },
-    {
         "id": "case",
-        "numeral": "III",
+        "numeral": "II",
         "title": "Theca Coriacea",
-        "subtitle": "Leder-Hülle für das iPhone 17",
+        "subtitle": "Braune Leder-Hülle für das iPhone 17",
         "url": None,
         "shared": False,
     },
     {
         "id": "fendi",
-        "numeral": "IV",
+        "numeral": "III",
         "title": "Pera Fendiana",
-        "subtitle": "Fendi Pochette aus FF-Jacquard in Braun, zum Zusammenlegen",
-        "url": "https://www.fendi.com/at-de/herren/taschen/flache-pochette-mittlerer-gro%C3%9Fe-aus-ff-jacquard-pochette-aus-stoff-in-braun-7n0134afbvf1hrm",
+        "subtitle": "Fendi Pochette aus FF-Jacquard in Schwarz, zum Zusammenlegen",
+        "url": "https://www.fendi.com/at-de/herren/taschen/pochetten/flache-pochette-mittlerer-gro%C3%9Fe-aus-ff-jacquard-pochette-aus-stoff-in-schwarz-7n0134afbvf1ikj",
         "shared": True,
     },
     {
-        "id": "parma",
+        "id": "candle",
+        "numeral": "IV",
+        "title": "Cera Odorata",
+        "subtitle": "Eine Duftkerze, z.B. von Baobab Collection",
+        "url": "https://eu.baobabcollection.com/en-ch",
+        "shared": False,
+    },
+    {
+        "id": "suitsupply",
         "numeral": "V",
+        "title": "Tessera Sartoria",
+        "subtitle": "Suitsupply Geschenkkarte",
+        "url": "https://suitsupply.com/en-sg/giftcard/details",
+        "shared": False,
+    },
+    {
+        "id": "laptop",
+        "numeral": "VI",
+        "title": "Capsa Nigra",
+        "subtitle": "Schwarze Leder-Hülle für den Laptop",
+        "url": None,
+        "shared": False,
+    },
+    {
+        "id": "necessaire",
+        "numeral": "VII",
+        "title": "Loculus Coriaceus",
+        "subtitle": "Schwarzes Leder-Nécessaire",
+        "url": None,
+        "shared": False,
+    },
+    {
+        "id": "parma",
+        "numeral": "VIII",
         "title": "Unguentum Parmense",
-        "subtitle": "Ein Duft von Acqua di Parma",
+        "subtitle": "Acqua di Parma, die gelbe Colonia-Linie",
         "url": None,
         "shared": False,
     },
@@ -73,6 +97,13 @@ TITULI = [
     ("Pontifex Festi", "Hohepriester des Festes"),
     ("Centurio Cantus", "Zenturio des Gesangs"),
 ]
+
+# Roles that must be filled: given to the first guests until someone holds each.
+PICTORES = [
+    ("Pictor Luminis", "Fotograf: Halte die Nacht in Bildern fest"),
+    ("Chronista Motus", "Videograf: Halte die Nacht in bewegten Bildern fest"),
+]
+ALL_TITULI = {t[0]: t for t in TITULI + PICTORES}
 
 OMINA = [
     ("Fortes fortuna adiuvat.", "Den Mutigen hilft das Glück. Heute Nacht wirst du mutig sein."),
@@ -116,9 +147,9 @@ def to_roman(n: int) -> str:
     return out
 
 
-def oraculum(name: str) -> dict:
+def oraculum(name: str, stored_title: str | None = None) -> dict:
     digest = hashlib.sha256(name.strip().lower().encode()).digest()
-    titulus = TITULI[digest[0] % len(TITULI)]
+    titulus = ALL_TITULI.get(stored_title) or TITULI[digest[0] % len(TITULI)]
     omen = OMINA[digest[1] % len(OMINA)]
     numerus = digest[2] % 99 + 1
     mandatum = MANDATA[digest[3] % len(MANDATA)]
@@ -252,28 +283,45 @@ a { color: var(--gold) !important; }
 .oracle .num { font-family: 'Cinzel', serif; color: #d98b8b; margin-top: 1rem; letter-spacing: 0.2em; font-size: 0.9rem; }
 @keyframes reveal { from { opacity: 0; filter: blur(8px); transform: scale(0.97); } to { opacity: 1; filter: none; transform: none; } }
 
-/* wishlist */
+/* wishlist (collapsible, understated) */
+[data-testid="stExpander"] details {
+  border: 1px solid rgba(201,162,75,0.22) !important; border-radius: 0 !important; background: rgba(0,0,0,0.2);
+}
+[data-testid="stExpander"] summary { padding: 0.7rem 1rem; }
+[data-testid="stExpander"] summary p {
+  font-family: 'Cinzel', serif !important; color: var(--gold-dim) !important;
+  letter-spacing: 0.3em; font-size: 0.85rem !important;
+}
+[data-testid="stExpander"] summary:hover p { color: var(--gold) !important; }
+[data-testid="stExpander"] summary svg { color: var(--gold-dim); }
 .disclaimer {
-  text-align: center; font-style: italic; border-top: 1px solid rgba(201,162,75,0.2);
-  border-bottom: 1px solid rgba(201,162,75,0.2); padding: 1rem 0.5rem; margin-bottom: 1.4rem;
+  text-align: center; font-style: italic; font-size: 1rem; color: rgba(233,220,192,0.7);
+  padding: 0.2rem 0.3rem 1rem; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(201,162,75,0.15);
 }
 .disclaimer .latin {
   font-family: 'Cinzel', serif; font-style: normal; color: var(--gold);
-  letter-spacing: 0.12em; display: block; margin-bottom: 0.4rem;
+  letter-spacing: 0.1em; display: block; margin-bottom: 0.3rem; font-size: 0.9rem;
 }
-.item { display: flex; gap: 1rem; align-items: flex-start; }
-.item-num { font-family: 'Cinzel Decorative', serif; color: var(--gold); font-size: 1.7rem; min-width: 2.6rem; line-height: 1.2; }
+.item { display: flex; gap: 0.7rem; align-items: baseline; }
+.item-num { font-family: 'Cinzel', serif; color: var(--gold-dim); font-size: 0.9rem; min-width: 2.2rem; }
 .item-body { flex: 1; min-width: 0; }
-.item-title { font-family: 'Cinzel', serif; color: var(--parchment); font-size: 1.2rem; letter-spacing: 0.06em; }
-.item-sub { font-style: italic; color: rgba(233,220,192,0.6); }
+.item-title { font-family: 'Cinzel', serif; color: var(--parchment); font-size: 0.95rem; letter-spacing: 0.05em; }
+.item-sub { font-style: italic; color: rgba(233,220,192,0.55); font-size: 0.95rem; line-height: 1.35; }
 .item-badge {
-  display: inline-block; font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.18em;
-  border: 1px solid var(--blood); color: #d98b8b; padding: 0.1rem 0.5rem; margin: 0.3rem 0;
+  font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.15em; vertical-align: middle;
+  border: 1px solid var(--blood); color: #d98b8b; padding: 0.05rem 0.4rem; margin-left: 0.3rem;
 }
-.item-link a { font-family: 'Cinzel', serif; font-size: 0.82rem; letter-spacing: 0.15em; }
-.item-names { font-style: italic; color: var(--gold); font-size: 1.05rem; margin: 0.4rem 0 0.2rem; }
-.item-names.empty { color: rgba(233,220,192,0.4); }
-[data-testid="stVerticalBlockBorderWrapper"] { border-color: rgba(201,162,75,0.25) !important; border-radius: 0 !important; }
+a.item-link { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.12em; font-style: normal; margin-left: 0.3rem; }
+.item-names { font-style: italic; color: var(--gold); font-size: 0.9rem; margin-top: 0.15rem; }
+.item-sep { height: 1px; background: rgba(201,162,75,0.1); margin: 0.1rem 0 0.2rem; }
+.st-key-wishlist .stButton button { padding: 0.3rem 0.3rem; min-height: 0; letter-spacing: 0.04em; border-color: var(--gold-dim) !important; }
+.st-key-wishlist .stButton button p { font-size: 0.75rem !important; }
+.st-key-wishlist [data-testid="stHorizontalBlock"] { gap: 0.6rem; }
+@media (max-width: 640px) {
+  .st-key-wishlist [data-testid="stHorizontalBlock"] { flex-wrap: nowrap !important; }
+  .st-key-wishlist [data-testid="stColumn"]:first-child { flex: 1 1 auto !important; min-width: 0 !important; width: auto !important; }
+  .st-key-wishlist [data-testid="stColumn"]:last-child { flex: 0 0 6.6rem !important; min-width: 6.6rem !important; width: 6.6rem !important; }
+}
 
 /* inputs */
 .stTextInput div[data-baseweb="input"], .stTextInput div[data-baseweb="base-input"] { background: transparent !important; border: none !important; }
@@ -361,8 +409,15 @@ def render_gate(db) -> None:
             st.error("Die Götter verlangen einen echten Namen.")
             return
         with st.spinner("Das Siegel bricht ..."):
-            o = oraculum(name)
-            db.add_guest(name, o["titulus"][0], o["mandatum"][1])
+            guests = db.guests()
+            if name in guests:
+                title = guests[name]
+            else:
+                taken = set(guests.values())
+                free = [t for t, _ in PICTORES if t not in taken]
+                title = free[0] if free else oraculum(name)["titulus"][0]
+                db.add_guest(name, title, oraculum(name)["mandatum"][1])
+        st.session_state.title = title
         st.session_state.guest = name
         st.rerun()
 
@@ -425,9 +480,6 @@ def render_invitation(db, guest: str) -> None:
     render_oracle(guest)
 
     html(RULE)
-    render_wishlist(db, guest)
-
-    html(RULE)
     count = len(db.guests())
     if count:
         html(f'<div class="census">Siegel bereits gebrochen: <b>{to_roman(count)}</b></div>')
@@ -435,6 +487,7 @@ def render_invitation(db, guest: str) -> None:
         '<div class="whisper">Erzähle niemandem mehr, als nötig ist.<br>'
         "Wir sehen uns im Schein der Fackeln.</div>"
     )
+    render_wishlist(db, guest)
     html('<div class="footer">AVE GREGORIUS</div>')
 
     if st.button("Nicht du? Abmelden", type="tertiary", use_container_width=True):
@@ -452,7 +505,7 @@ def render_oracle(guest: str) -> None:
             st.rerun()
         return
 
-    o = oraculum(guest)
+    o = oraculum(guest, st.session_state.get("title"))
     (t_la, t_de), (om_la, om_de), (m_la, m_de) = o["titulus"], o["omen"], o["mandatum"]
     html(
         f"""
@@ -477,44 +530,41 @@ def render_oracle(guest: str) -> None:
 
 
 def render_wishlist(db, guest: str) -> None:
-    html('<div class="section">Dona</div>')
-    html('<div class="section-sub">Die Wunschliste</div>')
-    html(
-        '<div class="disclaimer"><span class="latin">Praesentia tua donum satis est</span>'
-        "Du musst mir nichts schenken. Deine Anwesenheit ist Geschenk genug.<br>"
-        "Wer dennoch etwas beitragen möchte, kann sich unten einschreiben. "
-        "Ihr dürft auch gerne zusammenlegen, wenn ihr wollt.</div>"
-    )
-
     signups = db.signups()
-    for item in WISHLIST:
-        names = signups.get(item["id"], [])
-        badge = '<div><span class="item-badge">COLLATIO</span></div>' if item["shared"] else ""
-        link = (
-            f'<div class="item-link"><a href="{item["url"]}" target="_blank" rel="noopener">Ansehen</a></div>'
-            if item["url"] else ""
+    with st.expander("Dona — Wunschliste", expanded=False), st.container(key="wishlist"):
+        html(
+            '<div class="disclaimer"><span class="latin">Praesentia tua donum satis est</span>'
+            "Du musst mir nichts schenken. Deine Anwesenheit ist Geschenk genug.<br>"
+            "Wer dennoch etwas beitragen möchte, kann sich unten einschreiben. "
+            "Ihr dürft auch gerne zusammenlegen, wenn ihr wollt.</div>"
         )
-        if names:
-            who = f'<div class="item-names">Eingeschrieben: {esc(", ".join(names))}</div>'
-        else:
-            who = '<div class="item-names empty">Noch niemand hat sich eingeschrieben.</div>'
-
-        with st.container(border=True):
-            html(
-                f'<div class="item"><div class="item-num">{item["numeral"]}</div>'
-                f'<div class="item-body"><div class="item-title">{item["title"]}</div>'
-                f'<div class="item-sub">{item["subtitle"]}</div>{badge}{link}{who}</div></div>'
+        for item in WISHLIST:
+            names = signups.get(item["id"], [])
+            badge = ' <span class="item-badge">COLLATIO</span>' if item["shared"] else ""
+            link = (
+                f' <a class="item-link" href="{item["url"]}" target="_blank" rel="noopener">Ansehen</a>'
+                if item["url"] else ""
             )
-            if guest in names:
-                if st.button("Austragen", key=f"leave-{item['id']}", use_container_width=True):
-                    with st.spinner(""):
+            who = (
+                f'<div class="item-names">Eingeschrieben: {esc(", ".join(names))}</div>'
+                if names else ""
+            )
+            col_text, col_btn = st.columns([3, 1], vertical_alignment="center")
+            with col_text:
+                html(
+                    f'<div class="item"><div class="item-num">{item["numeral"]}</div>'
+                    f'<div class="item-body"><div class="item-title">{item["title"]}{badge}</div>'
+                    f'<div class="item-sub">{item["subtitle"]}{link}</div>{who}</div></div>'
+                )
+            with col_btn:
+                if guest in names:
+                    if st.button("Austragen", key=f"leave-{item['id']}", use_container_width=True):
                         db.remove_signup(item["id"], guest)
+                        st.rerun()
+                elif st.button("Eintragen", key=f"join-{item['id']}", use_container_width=True):
+                    db.add_signup(item["id"], item["title"], guest)
                     st.rerun()
-            else:
-                if st.button("Mich einschreiben", key=f"join-{item['id']}", use_container_width=True):
-                    with st.spinner(""):
-                        db.add_signup(item["id"], item["title"], guest)
-                    st.rerun()
+            html('<div class="item-sep"></div>')
 
 
 # ---------------------------------------------------------------- main
